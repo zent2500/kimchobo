@@ -1,0 +1,248 @@
+[GIT이란?]
+자신이 작성한 코드 형상관리 도구
+
+[GIT 설치하기]
+
+1) 자신의 윈도우 운영체제 32비트, 64비트 확인하기 
+
+c:>wmic os get osarchitecture 엔터!
+
+(또는) 윈도우버튼 > 설정 > 시스템 > 정보
+
+결과: 64비트 
+
+2) 자신의 운영체제에 맞는 GIT을 다운로드하고 설치한다.
+
+https://git-scm.com/downloads/win
+
+
+3) git의 버전을 확인한다.
+c:> git -v 
+
+
+4) 현재 설치된 config(환경구성)를 확인한다
+c:> git config --list
+
+
+5) config 환경구성 파일 직접 편집하기 
+c:> git config --global -e    <-- 자주 사용되지 않음
+
+
+6) vscode를 git config 편집하는데 사용하고 싶다면 
+c:> git config --global core.editor "code --wait"
+c:> git config --global -e    <-- 이제부터 vscode가 config 파일 수정하는데 사용됨.
+c:> code .                    <-- (참고) 현재 디렉토리를 열면서 vscode가 실행됨.
+
+7) git에서 사용할 이름과 이메일을 세팅하자.
+c:> git config --global user.name "Kimchobo"
+c:> git config --global user.email "router128@hanmail.net"
+
+c:> git config user.name     <--이름 확인 
+c:> git config user.email    <--이메일 확인
+
+8)git에서 자동 엔터키 설정
+c:> git config --global core.autocrlf true   
+
+(윈도우에서 명령어 줄바꿈 처리에서 crlf가 사용됨. git으로 올라갈 때 crlf가 삭제됨, 반대로 git에서 파일을 가져올 때는 crlf를 붙여줌.)
+
+*crlf: carriage return(\r): 커서를 텍스트의 시작 위치로,  line feed(\n): 커서를 다음 줄 내려주는 역할
+------------------------------------------------------------------------------------------
+9) 윈도우> 내문서 > projects라는 폴더를 만든다.
+
+만들어진 projects 폴더 위에서 마우스 우클릭 > 터미널에서 열기 
+PS C:\Users\USER\Documents\projects>
+
+
+10) projects 폴더 하위에 git이라는 폴더를 만들자.
+
+PS C:\Users\USER\Documents\projects> mkdir git 
+cd git 
+
+11) 현재 디렉토리(git)에서 git을 초기화 하기
+
+PS C:\Users\USER\Documents\projects\git> git init
+결과: .git 디렉토리가 생성됨
+PS C:\Users\USER\Documents\projects\git>dir /a (숨김파일까지 보기)
+PS C:\Users\USER\Documents\projects\git>get-childitem -force (파워쉘에서 dir /a 명령어가 작동하지 않을 때 사용함)
+
+12> 현재 git의 상태보기(commit이 처리되었는지 확인 등)
+PS C:\Users\USER\Documents\projects\git>git status 
+
+13> 명령어 alias 만들기
+
+PS C:\Users\USER\Documents\projects\git>git config --global alias.st status   (st로 status 대신함)
+
+14> git config 다음에 올 수 있는 명령어 미리 알아보기
+
+PS C:\Users\USER\Documents\projects\git>git config --h   (--h로 이 다음에 올 수 있는 명령어를 볼 수 있다.)
+
+15> git workflow 이해하기(작업과정)
+
+working directory <----> staging area <----> .git directory <----------> github
+                                      commit                    push ->
+                                                                pull <-
+
+
+* commit된 파일에는 sha-1 hash 코드(40chars)가 부여됨. 이 해쉬코드를 이용해서 버전 정보를 참조하게 됨.
+* message 
+* authro 
+* date/time
+
+
+16) working directory는 2가지 모드가 있음. untracked/tracked(modified | unmodified)
+
+17) 파일 생성하기 
+
+PS C:\Users\USER\Documents\projects\git>echo hello world! > a.txt 
+PS C:\Users\USER\Documents\projects\git>echo hello world! > b.txt 
+PS C:\Users\USER\Documents\projects\git>echo hello world! > c.txt 
+PS C:\Users\USER\Documents\projects\git>ls    (파일 목록 보기)
+
+18) 파일 상태보기
+PS C:\Users\USER\Documents\projects\git>git status 
+
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        a.txt
+        b.txt
+        c.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+PS C:\Users\route\projects\git>
+
+19) a.txt 파일을 tracking 해보자
+
+PS C:\Users\route\projects\git>git add a.txt 
+PS C:\Users\route\projects\git>git status 
+---On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+        new file:   a.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        b.txt
+        c.txt
+---
+
+20) b.txt, c.txt 파일을 staging 상태로 바꾸자
+PS C:\Users\route\projects\git>git add *.txt 
+PS C:\Users\route\projects\git>git status 
+
+* unstage 하려면? git rm --cached *.txt 
+
+21) working directory에서 a.txt 파일을 변경해보자
+PS C:\Users\route\projects\git>echo crown >> a.txt 
+PS C:\Users\route\projects\git>git status 
+
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+        new file:   a.txt
+        new file:   b.txt
+        new file:   c.txt
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   a.txt
+
+22) working directory에서 수정된 파일 a.txt 파일을 staging area로 보내자.
+PS C:\Users\route\projects\git>git add a.txt 
+PS C:\Users\route\projects\git>git status 
+
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+        new file:   a.txt
+        new file:   b.txt
+        new file:   c.txt
+
+
+23) stating area에 있는 *.txt 파일들을 untracked 상태로 바꾸자.
+PS C:\Users\route\projects\git>git rm --cached *.txt 
+PS C:\Users\route\projects\git>git status 
+
+24) 다음 2개의 명령어의 차이점은 무엇인가?
+PS C:\Users\route\projects\git>git add *  
+PS C:\Users\route\projects\git>git add . 
+
+25) 추적하지 않는 파일 목록 만들기
+PS C:\Users\route\projects\git>echo style > style.css
+PS C:\Users\route\projects\git>echo log > a.log 
+PS C:\Users\route\projects\git>ls    (파일 목록 보기)
+PS C:\Users\route\projects\git>git *.log > .gitignore    (.gitignore 파일목록에 있는 파일들은 추적 안함.)
+
+.gitigore 파일은 편집해도 됨. 
+
+a.log 
+*.log
+build/
+build/.log <--build/*.log와 동일
+
+26) git status 간단하게 보기
+PS C:\Users\route\projects\git>git status -s 
+
+PS C:\Users\route\projects\git> echo lion > c.txt
+PS C:\Users\route\projects\git> git status -s
+
+A  a.txt
+A  b.txt
+AM c.txt      <--A: add, M:modified
+?? .gitignore
+?? a.log
+?? style.css
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
